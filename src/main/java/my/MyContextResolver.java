@@ -7,6 +7,7 @@ import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
 import javax.json.bind.config.PropertyVisibilityStrategy;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
@@ -14,8 +15,11 @@ import javax.ws.rs.ext.Provider;
 @Provider
 public class MyContextResolver implements ContextResolver<Jsonb> {
 
-  // somehow get this securityContext injected
   private SecurityContext securityContext;
+
+  public MyContextResolver(@Context SecurityContext securityContext) {
+    this.securityContext = securityContext;
+  }
 
   @Override
   public Jsonb getContext(Class<?> type) {
