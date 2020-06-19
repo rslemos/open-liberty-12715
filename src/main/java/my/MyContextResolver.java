@@ -8,6 +8,7 @@ import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
 import javax.json.bind.config.PropertyVisibilityStrategy;
 import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
@@ -15,7 +16,7 @@ import javax.ws.rs.ext.Provider;
 @Provider
 public class MyContextResolver implements ContextResolver<Jsonb> {
 
-  // somehow get this application injected
+  @Context
   private Application application;
 
   @Override
