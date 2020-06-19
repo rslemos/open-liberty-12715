@@ -7,6 +7,7 @@ import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
 import javax.json.bind.config.PropertyVisibilityStrategy;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
@@ -14,8 +15,8 @@ import javax.ws.rs.ext.Provider;
 @Provider
 public class MyContextResolver implements ContextResolver<Jsonb> {
 
-  // somehow get this securityContext injected
-  private SecurityContext securityContext;
+  // somehow get this application injected
+  private Application application;
 
   @Override
   public Jsonb getContext(Class<?> type) {
@@ -33,6 +34,7 @@ public class MyContextResolver implements ContextResolver<Jsonb> {
 
         private boolean useSecurityContextToVetProperty() {
           try {
+            SecurityContext securityContext = (SecurityContext)application.getProperties().get("securityContext");
             System.out.println("Using securityContext: " + securityContext);
             System.out.println("isUserInRole(admin): " + securityContext.isUserInRole("admin"));
             return true;
