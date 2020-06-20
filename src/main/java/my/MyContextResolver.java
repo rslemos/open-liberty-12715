@@ -1,33 +1,30 @@
 package my;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import javax.json.bind.JsonbConfig;
-import javax.json.bind.config.PropertyVisibilityStrategy;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
+import com.fasterxml.jackson.databind.ser.PropertyWriter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+
 @Provider
-public class MyContextResolver implements ContextResolver<Jsonb> {
+public class MyContextResolver implements ContextResolver<ObjectMapper> {
 
   // somehow get this securityContext injected
   private SecurityContext securityContext;
 
   @Override
-  public Jsonb getContext(Class<?> type) {
-    JsonbConfig config = new JsonbConfig()
-      .withPropertyVisibilityStrategy(new PropertyVisibilityStrategy() {
-        @Override
-        public boolean isVisible(Field field) {
+  public ObjectMapper getContext(Class<?> type) {
+    SimpleFilterProvider filters = new SimpleFilterProvider();
+    filters.addFilter("myfilter", new SimpleBeanPropertyFilter() {
+        protected boolean include(BeanPropertyWriter writer) {
           return useSecurityContextToVetProperty();
         }
 
-        @Override
-        public boolean isVisible(Method method) {
+        protected boolean include(PropertyWriter writer) {
           return useSecurityContextToVetProperty();
         }
 
@@ -41,11 +38,8 @@ public class MyContextResolver implements ContextResolver<Jsonb> {
             throw e;
           }
         }
-      })
-    ;
+    });
 
-    Jsonb jsonb = JsonbBuilder.newBuilder().withConfig(config).build();
-
-    return jsonb;
+    return new ObjectMapper().setFilterProvider(filters);
   }
 }

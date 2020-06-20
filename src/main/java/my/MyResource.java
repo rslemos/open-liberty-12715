@@ -5,6 +5,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+
 @Path("/myresource")
 @Produces(MediaType.APPLICATION_JSON)
 public class MyResource {
@@ -14,6 +16,7 @@ public class MyResource {
     return new MyData();
   }
 
+  @JsonFilter("myfilter")
   public static class MyData {
     public int myField = 42;
   }
